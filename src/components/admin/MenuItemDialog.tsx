@@ -30,7 +30,7 @@ import { Loader2, Upload, Utensils } from "lucide-react";
 const menuItemSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string(),
-  price: z.coerce.number().min(0, "Price must be 0 or more"),
+  price: z.preprocess((val) => Number(val), z.number().min(0, "Price must be 0 or more")),
   category_id: z.string().min(1, "Category is required"),
   is_featured: z.boolean(),
   is_available: z.boolean(),
@@ -155,7 +155,7 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
         <DialogHeader>
           <DialogTitle>{editingItem ? "Edit Item" : "Add Item"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
+        <form onSubmit={handleSubmit((data: MenuItemFormData) => mutation.mutate(data))} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="item-name">Name</Label>
             <Input id="item-name" {...register("name")} />

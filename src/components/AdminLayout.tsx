@@ -27,7 +27,7 @@ function AdminSidebar() {
   const navigate = useNavigate();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
+  
 
   const handleLogout = async () => {
     await signOut();
