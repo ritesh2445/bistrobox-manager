@@ -60,7 +60,8 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
     watch,
     formState: { errors },
   } = useForm<MenuItemFormData>({
-    resolver: zodResolver(menuItemSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(menuItemSchema) as any,
     values: editingItem
       ? {
           name: editingItem.name,
@@ -155,7 +156,7 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
         <DialogHeader>
           <DialogTitle>{editingItem ? "Edit Item" : "Add Item"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit((data: MenuItemFormData) => mutation.mutate(data))} className="space-y-4">
+        <form onSubmit={handleSubmit((data) => mutation.mutate(data as MenuItemFormData))} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="item-name">Name</Label>
             <Input id="item-name" {...register("name")} />
