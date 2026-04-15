@@ -30,7 +30,7 @@ import { Loader2, Upload, Utensils } from "lucide-react";
 const menuItemSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string(),
-  price: z.preprocess((val) => Number(val), z.number().min(0, "Price must be 0 or more")),
+  price: z.number().min(0, "Price must be 0 or more"),
   category_id: z.string().min(1, "Category is required"),
   is_featured: z.boolean(),
   is_available: z.boolean(),
