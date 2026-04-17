@@ -139,10 +139,10 @@ insert into public.categories (name, icon_name, sort_order) values
   ('Hot Beverages', 'flame', 4),
   ('Desserts', 'cake', 5);
 
-insert into public.menu_items (category_id, name, description, price, is_featured, is_available) values
-  ((select id from public.categories where name = 'Burgers'), 'Classic Smash Burger', 'Hand-smashed patty with melted cheese, caramelised onions, and our signature sauce on a toasted brioche bun.', 249, true, true),
-  ((select id from public.categories where name = 'Burgers'), 'Crispy Chicken Burger', 'Crispy fried chicken thigh with tangy slaw, pickles, and spicy mayo on a soft sesame bun.', 229, false, true),
-  ((select id from public.categories where name = 'Cold Coffee'), 'Cold Brew Latte', 'Slow-steeped cold brew blended with fresh milk and served over ice for a smooth, bold finish.', 179, true, true),
-  ((select id from public.categories where name = 'Cold Coffee'), 'Caramel Frappé', 'Blended iced coffee with rich caramel syrup, milk, and topped with whipped cream and a caramel drizzle.', 199, false, true),
-  ((select id from public.categories where name = 'Fries & Sides'), 'Loaded Masala Fries', 'Crispy golden fries tossed in our house masala spice blend, served with mint chutney dip.', 129, false, true),
-  ((select id from public.categories where name = 'Desserts'), 'Belgian Waffle', 'Fluffy Belgian waffle dusted with powdered sugar, served with fresh berries and a scoop of vanilla ice cream.', 219, false, false);
+insert into public.menu_items (category_id, name, description, price, image_url, is_featured, is_available) values
+  ((select id from public.categories where name = 'Burgers'), 'Classic Smash Burger', 'Hand-smashed patty with melted cheese, caramelised onions, and our signature sauce on a toasted brioche bun.', 249, 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80', true, true),
+  ((select id from public.categories where name = 'Burgers'), 'Crispy Chicken Burger', 'Crispy fried chicken thigh with tangy slaw, pickles, and spicy mayo on a soft sesame bun.', 229, 'https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?w=800&q=80', false, true),
+  ((select id from public.categories where name = 'Cold Coffee'), 'Cold Brew Latte', 'Slow-steeped cold brew blended with fresh milk and served over ice for a smooth, bold finish.', 179, 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800&q=80', true, true),
+  ((select id from public.categories where name = 'Cold Coffee'), 'Caramel Frappé', 'Blended iced coffee with rich caramel syrup, milk, and topped with whipped cream and a caramel drizzle.', 199, 'https://images.unsplash.com/photo-1643034989098-bde867ebfe7d?w=800&q=80', false, true),
+  ((select id from public.categories where name = 'Fries & Sides'), 'Loaded Masala Fries', 'Crispy golden fries tossed in our house masala spice blend, served with mint chutney dip.', 129, 'https://images.unsplash.com/photo-1576107232684-1279f390858e?w=800&q=80', false, true),
+  ((select id from public.categories where name = 'Desserts'), 'Belgian Waffle', 'Fluffy Belgian waffle dusted with powdered sugar, served with fresh berries and a scoop of vanilla ice cream.', 219, 'https://images.unsplash.com/photo-1562376552-0d160a2f14b5?w=800&q=80', false, false);

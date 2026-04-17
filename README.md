@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# BistroBox
 
 TODO: Document your project here

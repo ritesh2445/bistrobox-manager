@@ -15,6 +15,8 @@ import OverviewPage from "@/pages/OverviewPage";
 import MenuEditorPage from "@/pages/MenuEditorPage";
 import QRGeneratorPage from "@/pages/QRGeneratorPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import LandingPage from "@/pages/LandingPage";
+import SignupPage from "@/pages/SignupPage";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/menu" replace />} />
+            <Route path="/" element={<LandingPage />} />
             <Route
               path="/menu"
               element={
@@ -36,6 +38,7 @@ const App = () => (
               }
             />
             <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/admin/signup" element={<SignupPage />} />
             <Route path="/admin" element={<Navigate to="/admin/overview" replace />} />
             <Route
               path="/admin"

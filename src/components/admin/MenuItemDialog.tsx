@@ -106,7 +106,8 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
     clearInterval(progressInterval);
 
     if (error) {
-      toast.error("Image upload failed", { duration: 4000 });
+      console.error(error);
+      toast.error(error.message || "Image upload failed", { duration: 4000 });
       setUploading(false);
       setUploadProgress(0);
       return;
@@ -201,29 +202,41 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
               onChange={handleFileUpload}
               className="hidden"
             />
-            <div className="flex items-center gap-3">
-              <div className="h-16 w-16 overflow-hidden rounded bg-secondary">
-                {currentImageUrl ? (
-                  <img src={currentImageUrl} alt="Preview" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <Utensils className="h-6 w-6 text-muted-foreground/40" />
+            <div className="flex flex-col gap-3">
+              <div className="flex items-start gap-4">
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded bg-secondary">
+                  {currentImageUrl ? (
+                    <img src={currentImageUrl} alt="Preview" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Utensils className="h-8 w-8 text-muted-foreground/40" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-2">
+                  <Input 
+                    placeholder="Paste an image URL here..." 
+                    value={currentImageUrl || ""} 
+                    onChange={(e) => setImageUrl(e.target.value)}
+                  />
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-muted-foreground">OR</span>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="gap-1.5"
+                    >
+                      <Upload className="h-3.5 w-3.5" />
+                      Upload from device
+                    </Button>
                   </div>
-                )}
+                </div>
               </div>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="gap-1.5"
-              >
-                <Upload className="h-3.5 w-3.5" />
-                Upload
-              </Button>
+              {uploading && <Progress value={uploadProgress} className="h-1.5" />}
             </div>
-            {uploading && <Progress value={uploadProgress} className="h-1.5" />}
           </div>
 
           <div className="flex gap-6">

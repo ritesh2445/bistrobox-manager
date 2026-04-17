@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useForm } from "react-hook-form";
@@ -69,6 +69,12 @@ export default function LoginPage() {
             Sign In
           </Button>
         </form>
+        <div className="mt-6 text-center text-sm text-muted-foreground">
+          Don't have an account?{" "}
+          <Link to="/admin/signup" className="font-semibold text-primary hover:underline">
+            Sign Up
+          </Link>
+        </div>
       </div>
     </div>
   );
