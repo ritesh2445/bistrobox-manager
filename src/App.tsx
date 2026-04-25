@@ -14,11 +14,20 @@ import LoginPage from "@/pages/LoginPage";
 import OverviewPage from "@/pages/OverviewPage";
 import MenuEditorPage from "@/pages/MenuEditorPage";
 import QRGeneratorPage from "@/pages/QRGeneratorPage";
+import OrdersPage from "@/pages/OrdersPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import LandingPage from "@/pages/LandingPage";
 import SignupPage from "@/pages/SignupPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 60_000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -51,6 +60,7 @@ const App = () => (
               }
             >
               <Route path="overview" element={<OverviewPage />} />
+              <Route path="orders" element={<OrdersPage />} />
               <Route path="menu" element={<MenuEditorPage />} />
               <Route path="qr" element={<QRGeneratorPage />} />
             </Route>

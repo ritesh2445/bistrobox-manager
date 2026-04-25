@@ -41,18 +41,57 @@ export type Database = {
           id: string
           name: string
           sort_order: number
+          user_id: string | null
         }
         Insert: {
           icon_name: string
           id?: string
           name: string
           sort_order?: number
+          user_id?: string | null
         }
         Update: {
           icon_name?: string
           id?: string
           name?: string
           sort_order?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      waiter_requests: {
+        Row: {
+          id: string
+          table_number: string
+          guest_name: string
+          note: string
+          items: Json
+          status: string
+          created_at: string
+          resolved_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          table_number: string
+          guest_name?: string
+          note?: string
+          items?: Json
+          status?: string
+          created_at?: string
+          resolved_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          table_number?: string
+          guest_name?: string
+          note?: string
+          items?: Json
+          status?: string
+          created_at?: string
+          resolved_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -68,6 +107,7 @@ export type Database = {
           name: string
           price: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           category_id?: string | null
@@ -80,6 +120,7 @@ export type Database = {
           name: string
           price: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           category_id?: string | null
@@ -92,6 +133,7 @@ export type Database = {
           name?: string
           price?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {

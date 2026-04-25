@@ -43,9 +43,10 @@ interface MenuItemDialogProps {
   onOpenChange: (open: boolean) => void;
   editingItem: Tables<"menu_items"> | null;
   categories: Tables<"categories">[];
+  userId?: string;
 }
 
-export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: MenuItemDialogProps) {
+export function MenuItemDialog({ open, onOpenChange, editingItem, categories, userId }: MenuItemDialogProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -129,13 +130,13 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
         const { error } = await supabase.from("menu_items").update(payload).eq("id", editingItem.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("menu_items").insert([payload]);
+        const { error } = await supabase.from("menu_items").insert([{ ...payload, user_id: userId }]);
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin_menu_items"] });
-      queryClient.invalidateQueries({ queryKey: ["menu_items"] });
+      queryClient.invalidateQueries({ queryKey: ["admin_menu_items", userId] });
+      queryClient.invalidateQueries({ queryKey: ["menu_items", userId] });
       toast.success(editingItem ? "Item updated" : "Item added", { duration: 4000 });
       handleClose();
     },
@@ -178,16 +179,20 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories }: 
           <div className="space-y-1.5">
             <Label>Category</Label>
             <Select
-              value={watch("category_id")}
+              value={watch("category_id") || undefined}
               onValueChange={(val) => setValue("category_id", val, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
-              <SelectContent>
-                {categories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                ))}
+              <SelectContent className="z-[100]">
+                {categories.length === 0 ? (
+                  <SelectItem value="unassigned" disabled>No categories available. Please create one.</SelectItem>
+                ) : (
+                  categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
             {errors.category_id && <p className="text-xs text-destructive">{errors.category_id.message}</p>}

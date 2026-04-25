@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import type { Tables, TablesUpdate } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -35,31 +36,46 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, Pencil, Trash2, Search, Utensils } from "lucide-react";
 import { MenuItemDialog } from "@/components/admin/MenuItemDialog";
+import { CategoryManagerDialog } from "@/components/admin/CategoryManagerDialog";
+import { Layers } from "lucide-react";
 
 export default function MenuEditorPage() {
+  const { session } = useAuth();
+  const userId = session?.user?.id;
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [catDialogOpen, setCatDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Tables<"menu_items"> | null>(null);
   const [deleteItem, setDeleteItem] = useState<Tables<"menu_items"> | null>(null);
 
   const { data: categories = [] } = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("categories").select("*").order("sort_order");
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("user_id", userId!)
+        .order("sort_order");
       if (error) throw error;
       return data;
     },
+    enabled: !!userId,
   });
 
   const { data: items = [], isLoading } = useQuery({
-    queryKey: ["admin_menu_items"],
+    queryKey: ["admin_menu_items", userId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("menu_items").select("*").order("created_at");
+      const { data, error } = await supabase
+        .from("menu_items")
+        .select("*")
+        .eq("user_id", userId!)
+        .order("created_at");
       if (error) throw error;
       return data;
     },
+    enabled: !!userId,
   });
 
   const filteredItems = useMemo(() => {
@@ -81,20 +97,20 @@ export default function MenuEditorPage() {
       if (error) throw error;
     },
     onMutate: async ({ id, field, value }) => {
-      await queryClient.cancelQueries({ queryKey: ["admin_menu_items"] });
-      const previous = queryClient.getQueryData<Tables<"menu_items">[]>(["admin_menu_items"]);
-      queryClient.setQueryData<Tables<"menu_items">[]>(["admin_menu_items"], (old) =>
+      await queryClient.cancelQueries({ queryKey: ["admin_menu_items", userId] });
+      const previous = queryClient.getQueryData<Tables<"menu_items">[]>(["admin_menu_items", userId]);
+      queryClient.setQueryData<Tables<"menu_items">[]>(["admin_menu_items", userId], (old) =>
         old?.map((item) => (item.id === id ? { ...item, [field]: value } : item)) ?? []
       );
       return { previous };
     },
     onError: (_err, _vars, context) => {
-      queryClient.setQueryData(["admin_menu_items"], context?.previous);
+      queryClient.setQueryData(["admin_menu_items", userId], context?.previous);
       toast.error("Failed to update item", { duration: 4000 });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin_menu_items"] });
-      queryClient.invalidateQueries({ queryKey: ["menu_items"] });
+      queryClient.invalidateQueries({ queryKey: ["admin_menu_items", userId] });
+      queryClient.invalidateQueries({ queryKey: ["menu_items", userId] });
     },
   });
 
@@ -104,8 +120,8 @@ export default function MenuEditorPage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin_menu_items"] });
-      queryClient.invalidateQueries({ queryKey: ["menu_items"] });
+      queryClient.invalidateQueries({ queryKey: ["admin_menu_items", userId] });
+      queryClient.invalidateQueries({ queryKey: ["menu_items", userId] });
       toast.success("Item deleted", { duration: 4000 });
       setDeleteItem(null);
     },
@@ -132,9 +148,14 @@ export default function MenuEditorPage() {
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-foreground">Menu Editor</h1>
-        <Button onClick={handleAdd} className="gap-2">
-          <Plus className="h-4 w-4" /> Add Item
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setCatDialogOpen(true)} className="gap-2">
+            <Layers className="h-4 w-4" /> Categories
+          </Button>
+          <Button onClick={handleAdd} className="gap-2">
+            <Plus className="h-4 w-4" /> Add Item
+          </Button>
+        </div>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -230,7 +251,9 @@ export default function MenuEditorPage() {
               {filteredItems.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    No items found.
+                    {items.length === 0
+                      ? "No menu items yet. Click \"Add Item\" to create your first one."
+                      : "No items match your search."}
                   </TableCell>
                 </TableRow>
               )}
@@ -244,6 +267,14 @@ export default function MenuEditorPage() {
         onOpenChange={setDialogOpen}
         editingItem={editingItem}
         categories={categories}
+        userId={userId}
+      />
+
+      <CategoryManagerDialog
+        open={catDialogOpen}
+        onOpenChange={setCatDialogOpen}
+        categories={categories}
+        userId={userId}
       />
 
       <AlertDialog open={!!deleteItem} onOpenChange={(open) => !open && setDeleteItem(null)}>

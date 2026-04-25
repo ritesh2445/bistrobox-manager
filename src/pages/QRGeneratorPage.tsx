@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Download, QrCode } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function QRGeneratorPage() {
+  const { session } = useAuth();
   const [tableInput, setTableInput] = useState("");
   const [qrStyle, setQrStyle] = useState<"rounded" | "square">("rounded");
   const [fgColor, setFgColor] = useState("#F59E0B");
@@ -14,12 +16,16 @@ export default function QRGeneratorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const baseUrl = `${window.location.origin}/menu`;
-  const fullUrl = tableInput ? `${baseUrl}?table=${encodeURIComponent(tableInput)}` : baseUrl;
+  const userId = session?.user?.id ?? "";
+  const baseUrl = `${import.meta.env.VITE_PUBLIC_URL || window.location.origin}/menu`;
+  // Include both user id (for scoping the account's menu) and table identifier
+  const fullUrl = tableInput && userId
+    ? `${baseUrl}?uid=${encodeURIComponent(userId)}&table=${encodeURIComponent(tableInput)}`
+    : baseUrl;
 
   const generateQR = useCallback(async () => {
     const canvas = canvasRef.current;
-    if (!canvas || !tableInput) return;
+    if (!canvas || !tableInput || !userId) return;
 
     try {
       await QRCode.toCanvas(canvas, fullUrl, {
@@ -53,7 +59,7 @@ export default function QRGeneratorPage() {
     } catch {
       // invalid data, ignore
     }
-  }, [tableInput, fullUrl, fgColor, bgColor, qrStyle]);
+  }, [tableInput, fullUrl, fgColor, bgColor, qrStyle, userId]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -94,7 +100,10 @@ export default function QRGeneratorPage() {
 
           <div className="space-y-1.5">
             <Label>Generated URL</Label>
-            <Input value={fullUrl} readOnly className="text-muted-foreground" />
+            <Input value={tableInput && userId ? fullUrl : "(Enter table number above)"} readOnly className="text-muted-foreground text-xs" />
+            <p className="text-xs text-muted-foreground">
+              This QR links customers directly to <strong>your</strong> menu.
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -142,7 +151,7 @@ export default function QRGeneratorPage() {
 
           <Button
             onClick={handleDownload}
-            disabled={!tableInput}
+            disabled={!tableInput || !userId}
             className="gap-2"
           >
             <Download className="h-4 w-4" /> Download PNG
@@ -154,7 +163,7 @@ export default function QRGeneratorPage() {
 
         <div className="flex items-start justify-center">
           <div className="glass-card flex flex-col items-center rounded-xl p-8">
-            {tableInput ? (
+            {tableInput && userId ? (
               <canvas ref={canvasRef} />
             ) : (
               <div className="flex h-[280px] w-[280px] items-center justify-center">

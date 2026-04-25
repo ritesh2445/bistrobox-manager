@@ -5,9 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface MenuGridProps {
   items: Tables<"menu_items">[];
   loading: boolean;
+  onAddToCart?: (item: Tables<"menu_items">) => void;
 }
 
-export function MenuGrid({ items, loading }: MenuGridProps) {
+export function MenuGrid({ items, loading, onAddToCart }: MenuGridProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -29,7 +30,7 @@ export function MenuGrid({ items, loading }: MenuGridProps) {
   return (
     <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
-        <MenuItemCard key={item.id} item={item} />
+        <MenuItemCard key={item.id} item={item} onAddToCart={onAddToCart} />
       ))}
     </div>
   );
