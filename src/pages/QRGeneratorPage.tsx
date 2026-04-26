@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function QRGeneratorPage() {
   const { session } = useAuth();
-  const [tableInput, setTableInput] = useState("");
   const [qrStyle, setQrStyle] = useState<"rounded" | "square">("rounded");
   const [fgColor, setFgColor] = useState("#F59E0B");
   const [bgColor, setBgColor] = useState("#111827");
@@ -17,15 +16,17 @@ export default function QRGeneratorPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   const userId = session?.user?.id ?? "";
-  const baseUrl = `${import.meta.env.VITE_PUBLIC_URL || window.location.origin}/menu`;
-  // Include both user id (for scoping the account's menu) and table identifier
-  const fullUrl = tableInput && userId
-    ? `${baseUrl}?uid=${encodeURIComponent(userId)}&table=${encodeURIComponent(tableInput)}`
-    : baseUrl;
+  
+  // Create base URL cleanly, handling trailing slashes if present
+  const envUrl = import.meta.env.VITE_PUBLIC_URL || window.location.origin;
+  const baseUrl = `${envUrl.replace(/\/+$/, '')}/menu`;
+  
+  // Include user id for scoping the account's menu
+  const fullUrl = userId ? `${baseUrl}?uid=${encodeURIComponent(userId)}` : baseUrl;
 
   const generateQR = useCallback(async () => {
     const canvas = canvasRef.current;
-    if (!canvas || !tableInput || !userId) return;
+    if (!canvas || !userId) return;
 
     try {
       await QRCode.toCanvas(canvas, fullUrl, {
@@ -59,7 +60,7 @@ export default function QRGeneratorPage() {
     } catch {
       // invalid data, ignore
     }
-  }, [tableInput, fullUrl, fgColor, bgColor, qrStyle, userId]);
+  }, [fullUrl, fgColor, bgColor, qrStyle, userId]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -77,7 +78,7 @@ export default function QRGeneratorPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `bistrobox-table-${tableInput}.png`;
+      a.download = `bistrobox-qr.png`;
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -89,18 +90,8 @@ export default function QRGeneratorPage() {
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-6">
           <div className="space-y-1.5">
-            <Label htmlFor="table-number">Table Number or Name</Label>
-            <Input
-              id="table-number"
-              placeholder="e.g. Table 4"
-              value={tableInput}
-              onChange={(e) => setTableInput(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Generated URL</Label>
-            <Input value={tableInput && userId ? fullUrl : "(Enter table number above)"} readOnly className="text-muted-foreground text-xs" />
+            <Label>Generated Menu URL</Label>
+            <Input value={userId ? fullUrl : "Loading..."} readOnly className="text-muted-foreground text-xs" />
             <p className="text-xs text-muted-foreground">
               This QR links customers directly to <strong>your</strong> menu.
             </p>
@@ -151,29 +142,21 @@ export default function QRGeneratorPage() {
 
           <Button
             onClick={handleDownload}
-            disabled={!tableInput || !userId}
+            disabled={!userId}
             className="gap-2"
           >
             <Download className="h-4 w-4" /> Download PNG
           </Button>
-          {!tableInput && (
-            <p className="text-sm text-muted-foreground">Enter a table number to generate a QR code</p>
-          )}
         </div>
 
         <div className="flex items-start justify-center">
           <div className="glass-card flex flex-col items-center rounded-xl p-8">
-            {tableInput && userId ? (
+            {userId ? (
               <canvas ref={canvasRef} />
             ) : (
               <div className="flex h-[280px] w-[280px] items-center justify-center">
                 <QrCode className="h-24 w-24 text-muted-foreground/20" />
               </div>
-            )}
-            {tableInput && (
-              <p className="mt-4 text-sm font-medium text-muted-foreground">
-                Table: {tableInput}
-              </p>
             )}
           </div>
         </div>
