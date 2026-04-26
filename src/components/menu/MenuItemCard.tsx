@@ -21,7 +21,7 @@ export function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
   const [added, setAdded] = useState(false);
 
   const handleClick = () => {
-    trackEvent("item_click", { item_id: item.id, item_name: item.name });
+    trackEvent("item_click", { item_id: item.id, item_name: item.name }, item.user_id || undefined);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {

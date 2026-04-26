@@ -126,7 +126,8 @@ export function CallWaiterButton({
       ]);
       if (error) throw error;
       toast.success(`Waiter notified for Table ${tableParam}!`, { duration: 4000 });
-    } catch {
+    } catch (err) {
+      console.error("Call Waiter Error:", err);
       toast.error("Failed to call waiter. Please try again.");
     } finally {
       setLoading(false);

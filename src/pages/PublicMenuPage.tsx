@@ -40,7 +40,10 @@ export default function PublicMenuPage() {
   // Track page view only after guest has entered
   useEffect(() => {
     if (guest) {
-      trackEvent("menu_view", { table: guest.table, guest: guest.name, uid: uidParam ?? "" });
+      trackEvent("menu_view", { 
+      uid: uidParam || "demo",
+      table: tableParam || "none" 
+    }, uidParam || undefined);
     }
   }, [guest, uidParam]);
 

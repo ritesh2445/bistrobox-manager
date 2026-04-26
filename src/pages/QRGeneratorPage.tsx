@@ -161,6 +161,13 @@ export default function QRGeneratorPage() {
           </div>
         </div>
       </div>
+      
+      {/* Debug Info for Admin */}
+      <div className="mt-12 pt-6 border-t border-border/50 opacity-30 hover:opacity-100 transition-opacity">
+        <p className="text-[10px] font-mono text-muted-foreground break-all">
+          DEBUG: UID={userId} | URL={fullUrl}
+        </p>
+      </div>
     </div>
   );
 }

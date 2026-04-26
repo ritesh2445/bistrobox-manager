@@ -31,7 +31,8 @@ export default function OverviewPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("analytics")
-        .select("event_type, metadata, created_at");
+        .select("event_type, metadata, created_at")
+        .eq("user_id", userId!);
       if (error) throw error;
       return data as AnalyticsRow[];
     },
