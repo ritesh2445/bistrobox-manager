@@ -52,6 +52,7 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories, us
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imgPreviewError, setImgPreviewError] = useState(false);
 
   const {
     register,
@@ -115,6 +116,7 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories, us
     }
 
     const { data: publicUrlData } = supabase.storage.from("menu-images").getPublicUrl(filePath);
+    setImgPreviewError(false);
     setImageUrl(publicUrlData.publicUrl);
     setUploadProgress(100);
     setUploading(false);
@@ -210,8 +212,13 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories, us
             <div className="flex flex-col gap-3">
               <div className="flex items-start gap-4">
                 <div className="h-20 w-20 shrink-0 overflow-hidden rounded bg-secondary">
-                  {currentImageUrl ? (
-                    <img src={currentImageUrl} alt="Preview" className="h-full w-full object-cover" />
+                  {currentImageUrl && !imgPreviewError ? (
+                    <img
+                      src={currentImageUrl}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                      onError={() => setImgPreviewError(true)}
+                    />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
                       <Utensils className="h-8 w-8 text-muted-foreground/40" />
@@ -222,7 +229,10 @@ export function MenuItemDialog({ open, onOpenChange, editingItem, categories, us
                   <Input 
                     placeholder="Paste an image URL here..." 
                     value={currentImageUrl || ""} 
-                    onChange={(e) => setImageUrl(e.target.value)}
+                    onChange={(e) => {
+                      setImgPreviewError(false);
+                      setImageUrl(e.target.value);
+                    }}
                   />
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-semibold text-muted-foreground">OR</span>

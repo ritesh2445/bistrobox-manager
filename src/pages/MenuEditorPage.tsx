@@ -207,12 +207,19 @@ export default function MenuEditorPage() {
                   <TableCell>
                     <div className="h-10 w-10 overflow-hidden rounded bg-secondary">
                       {item.image_url ? (
-                        <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <Utensils className="h-4 w-4 text-muted-foreground/40" />
-                        </div>
-                      )}
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).style.display = "none";
+                            (e.currentTarget.nextElementSibling as HTMLElement | null)?.removeAttribute("style");
+                          }}
+                        />
+                      ) : null}
+                      <div className={`flex h-full w-full items-center justify-center ${item.image_url ? "hidden" : ""}`}>
+                        <Utensils className="h-4 w-4 text-muted-foreground/40" />
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{item.name}</TableCell>

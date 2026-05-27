@@ -19,6 +19,7 @@ function FallbackImage() {
 
 export function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
   const [added, setAdded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleClick = () => {
     trackEvent("item_click", { item_id: item.id, item_name: item.name }, item.user_id || undefined);
@@ -54,12 +55,13 @@ export function MenuItemCard({ item, onAddToCart }: MenuItemCardProps) {
       )}
 
       <div className="aspect-[4/3] w-full overflow-hidden">
-        {item.image_url ? (
+        {item.image_url && !imgError ? (
           <img
             src={item.image_url}
             alt={item.name}
             className="h-full w-full object-cover"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
         ) : (
           <FallbackImage />
