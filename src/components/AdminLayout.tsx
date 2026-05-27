@@ -16,7 +16,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NavLink } from "@/components/NavLink";
-import { BarChart3, UtensilsCrossed, QrCode, LogOut, ClipboardList, Bell, Check, Trash2, Clock } from "lucide-react";
+import { BarChart3, UtensilsCrossed, QrCode, LogOut, ClipboardList, Bell, Check, Trash2, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -170,7 +170,16 @@ function AdminSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </div>
-        <div className="p-4">
+        <div className="p-4 flex flex-col gap-1">
+          <Button
+            variant="ghost"
+            onClick={() => window.open(`/menu?uid=${userId}`, "_blank")}
+            className="w-full justify-start gap-2 text-[#C9A84C]/80 hover:text-[#C9A84C] hover:bg-[#C9A84C]/10"
+            title="Preview your public menu"
+          >
+            <Eye className="h-4 w-4 shrink-0" />
+            {!collapsed && "Preview Menu"}
+          </Button>
           <Button
             variant="ghost"
             onClick={handleLogout}

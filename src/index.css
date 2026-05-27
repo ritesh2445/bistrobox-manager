@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -50,44 +50,48 @@
 
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
+
+    /* ── Royal Menu Design Tokens ── */
+    --menu-gold: #C9A84C;
+    --menu-gold-dim: #A07C30;
+    --menu-gold-glow: rgba(201, 168, 76, 0.22);
+    --menu-dark: #07090F;
+    --menu-card: #0D1220;
+    --menu-card-border: rgba(201, 168, 76, 0.10);
+    --menu-cream: #F0E6CC;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
-    /* GPU compositing hint for smoother transitions */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', sans-serif;
-    /* Prevent layout thrashing from scroll */
     overflow-x: hidden;
-    /* Enable momentum scrolling on iOS */
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Remove tap highlight on mobile for interactive elements */
   button, a, [role="button"] {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Optimise images globally */
   img {
     content-visibility: auto;
   }
 }
 
 @layer utilities {
+  /* ── Existing utilities ── */
   .glass-card {
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
-    /* GPU layer promotion for blur elements */
     will-change: transform;
     transform: translateZ(0);
   }
@@ -100,7 +104,6 @@
     display: none;
   }
 
-  /* Smooth fade-in for pages */
   .animate-fade-in {
     animation: fadeIn 0.35s ease-out both;
   }
@@ -110,9 +113,90 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Reduce motion for accessibility */
+  /* ── Royal Menu Typography ── */
+  .royal-serif {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  }
+
+  /* ── Royal Menu Page Shell ── */
+  .menu-page {
+    background: var(--menu-dark);
+    min-height: 100vh;
+    color: var(--menu-cream);
+  }
+
+  /* ── Royal Card ── */
+  .royal-card {
+    background: var(--menu-card);
+    border: 1px solid var(--menu-card-border);
+    transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  }
+
+  .royal-card:hover {
+    border-color: rgba(201, 168, 76, 0.38);
+    box-shadow: 0 8px 40px var(--menu-gold-glow), 0 2px 12px rgba(0,0,0,0.5);
+    transform: translateY(-4px);
+  }
+
+  /* ── Gold text ── */
+  .gold-text {
+    color: var(--menu-gold);
+  }
+
+  /* ── Staggered card entrance ── */
+  @keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-card-in {
+    animation: cardFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Gold shimmer for hero ornament ── */
+  @keyframes goldPulse {
+    0%, 100% { opacity: 0.45; }
+    50%       { opacity: 1; }
+  }
+
+  .animate-gold-pulse {
+    animation: goldPulse 2.8s ease-in-out infinite;
+  }
+
+  /* ── Subtle float ── */
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  .animate-float {
+    animation: floatY 4s ease-in-out infinite;
+  }
+
+  /* ── Gold shimmer scan effect on cards ── */
+  @keyframes shimmerScan {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .shimmer-line {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(201, 168, 76, 0.35) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmerScan 2.5s linear infinite;
+  }
+
+  /* ── Reduce motion ── */
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in,
+    .animate-card-in,
+    .animate-gold-pulse,
+    .animate-float,
+    .shimmer-line,
     * {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;

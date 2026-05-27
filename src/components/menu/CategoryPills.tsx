@@ -12,26 +12,28 @@ interface CategoryPillsProps {
 export function CategoryPills({ categories, activeId, onSelect, loading }: CategoryPillsProps) {
   if (loading) {
     return (
-      <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-hide">
+      <div className="flex gap-1 overflow-x-auto border-b border-white/8 px-4 scrollbar-hide">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-9 w-28 shrink-0 rounded-full" />
+          <Skeleton key={i} className="my-3 h-5 w-24 shrink-0 rounded-sm bg-white/8" />
         ))}
       </div>
     );
   }
 
+  const baseClass =
+    "shrink-0 flex items-center gap-1.5 px-5 py-3.5 text-[0.7rem] font-semibold uppercase tracking-[0.18em] border-b-2 -mb-px transition-all duration-200";
+  const activeClass = "border-[#C9A84C] text-[#C9A84C]";
+  const inactiveClass = "border-transparent text-white/35 hover:text-white/65";
+
   return (
-    <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-hide">
+    <div className="flex overflow-x-auto border-b border-white/8 px-2 scrollbar-hide">
       <button
         onClick={() => onSelect(null)}
-        className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors
-          ${activeId === null
-            ? "bg-primary text-primary-foreground"
-            : "glass-card text-muted-foreground hover:text-foreground"
-          }`}
+        className={`${baseClass} ${activeId === null ? activeClass : inactiveClass}`}
       >
         All
       </button>
+
       {categories.map((cat) => {
         const Icon = getIcon(cat.icon_name);
         const isActive = activeId === cat.id;
@@ -39,13 +41,9 @@ export function CategoryPills({ categories, activeId, onSelect, loading }: Categ
           <button
             key={cat.id}
             onClick={() => onSelect(cat.id)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors
-              ${isActive
-                ? "bg-primary text-primary-foreground"
-                : "glass-card text-muted-foreground hover:text-foreground"
-              }`}
+            className={`${baseClass} ${isActive ? activeClass : inactiveClass}`}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-3 w-3" />
             {cat.name}
           </button>
         );

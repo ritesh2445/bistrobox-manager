@@ -11,9 +11,16 @@ interface MenuGridProps {
 export function MenuGrid({ items, loading, onAddToCart }: MenuGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 px-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-72 rounded-lg" />
+          <div key={i} className="overflow-hidden rounded-2xl bg-[#0D1220]">
+            <Skeleton className="aspect-[4/3] w-full rounded-none bg-white/5" />
+            <div className="space-y-2 p-5">
+              <Skeleton className="h-4 w-3/4 bg-white/5" />
+              <Skeleton className="h-3 w-full bg-white/5" />
+              <Skeleton className="h-3 w-2/3 bg-white/5" />
+            </div>
+          </div>
         ))}
       </div>
     );
@@ -21,16 +28,24 @@ export function MenuGrid({ items, loading, onAddToCart }: MenuGridProps) {
 
   if (items.length === 0) {
     return (
-      <div className="py-16 text-center text-muted-foreground">
-        No items in this category.
+      <div className="py-20 text-center">
+        <p className="royal-serif text-lg text-[#C9A84C]/50 italic">
+          Nothing to show in this category.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <MenuItemCard key={item.id} item={item} onAddToCart={onAddToCart} />
+    <div className="grid grid-cols-1 gap-5 px-4 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item, index) => (
+        <div
+          key={item.id}
+          className="animate-card-in"
+          style={{ animationDelay: `${index * 65}ms` }}
+        >
+          <MenuItemCard item={item} onAddToCart={onAddToCart} />
+        </div>
       ))}
     </div>
   );

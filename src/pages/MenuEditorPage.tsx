@@ -34,7 +34,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Pencil, Trash2, Search, Utensils } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Utensils, Eye } from "lucide-react";
 import { MenuItemDialog } from "@/components/admin/MenuItemDialog";
 import { CategoryManagerDialog } from "@/components/admin/CategoryManagerDialog";
 import { Layers } from "lucide-react";
@@ -149,6 +149,9 @@ export default function MenuEditorPage() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-foreground">Menu Editor</h1>
         <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => window.open(`/menu?uid=${userId}`, "_blank")} className="gap-2 text-amber-500 border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-400">
+            <Eye className="h-4 w-4" /> Preview
+          </Button>
           <Button variant="outline" onClick={() => setCatDialogOpen(true)} className="gap-2">
             <Layers className="h-4 w-4" /> Categories
           </Button>

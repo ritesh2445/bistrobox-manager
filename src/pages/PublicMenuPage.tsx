@@ -134,7 +134,7 @@ export default function PublicMenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="menu-page pb-28">
       <MenuHeader tableParam={guest.table} guestName={guest.name} />
       <MenuHero />
       <div id="menu-section" className="mx-auto max-w-5xl">
